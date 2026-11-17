@@ -278,3 +278,12 @@ tools/apple_music_to_m3u8.py  rewrites a Music app playlist for the 3DS
   `resources/banner.bnr`; it is not needed to build.
 
 The two decoders are vendored in `vendor/`.
+
+## License
+
+Crystal Player is released under the [MIT license](LICENSE). That covers the
+player's own code in `source/`, `tests/` and `tools/`.
+
+The vendored decoders keep their own terms and notices, unchanged in `vendor/`:
+dr_mp3 is public domain / MIT-0, stb_image is public domain. makerom is GPL-2.0,
+is not part of this repository, and is not covered by the MIT license.
