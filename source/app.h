@@ -31,6 +31,9 @@ typedef struct {
     bool   loaded;
     int    current;        // library index of the loaded track, -1 when idle
 
+    bool   shuffle;        // randomise the rest of the queue when it advances
+    int    repeat;         // 0 = off, 1 = repeat the queue, 2 = repeat one song
+
     char   status[160];
     u64    status_until;
 } App;

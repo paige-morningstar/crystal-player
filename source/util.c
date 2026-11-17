@@ -213,6 +213,27 @@ void util_join_normalized(char *out, size_t cap, const char *dir, const char *en
     util_copy(out, cap, res);
 }
 
+void util_shuffle_range(int *items, int count, uint32_t seed)
+{
+    if (!items || count < 2)
+        return;
+
+    if (seed == 0)
+        seed = 0x9E3779B9u;
+
+    for (int i = count - 1; i > 0; i--) {
+        // xorshift32: small, fast, and good enough to pick a play order.
+        seed ^= seed << 13;
+        seed ^= seed >> 17;
+        seed ^= seed << 5;
+
+        int j = (int)(seed % (uint32_t)(i + 1));
+        int tmp = items[i];
+        items[i] = items[j];
+        items[j] = tmp;
+    }
+}
+
 void util_tile_rgba8(uint8_t *dst, const uint8_t *src, int size)
 {
     const int tile = 8;

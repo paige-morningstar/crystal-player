@@ -193,7 +193,31 @@ static void draw_top(void)
     char q[200];
     snprintf(q, sizeof(q), "%s   %d / %d", g_app.queue_name[0] ? g_app.queue_name : "no queue",
              g_app.queue_count ? g_app.queue_pos + 1 : 0, g_app.queue_count);
-    text_draw(q, 12, 228, 0.32f, COL_DIM);
+
+    // Shuffle, repeat and any volume other than full, in the corner where they
+    // are visible from every view.
+    char modes[96];
+    modes[0] = 0;
+    if (g_app.shuffle)
+        util_copy(modes, sizeof(modes), "SHUF");
+    if (g_app.repeat) {
+        if (modes[0])
+            strcat(modes, "  ");
+        strcat(modes, g_app.repeat == 1 ? "REP ALL" : "REP ONE");
+    }
+    float vol = player_volume();
+    if (vol < 0.999f) {
+        char vtxt[32];
+        snprintf(vtxt, sizeof(vtxt), "%sVOL %d%%", modes[0] ? "  " : "",
+                 (int)(vol * 100.0f + 0.5f));
+        strcat(modes, vtxt);
+    }
+
+    float qmax = modes[0] ? 250.0f : 376.0f;
+    text_fit(q, 12, 228, qmax, 0.32f, COL_DIM);
+    if (modes[0])
+        text_draw(modes, 388.0f - text_w(modes, 0.3f), 229, 0.3f,
+                  (g_app.shuffle || g_app.repeat) ? COL_ACC2 : COL_DIM);
 }
 
 static void draw_bottom(void)
@@ -308,11 +332,11 @@ static void draw_bottom(void)
     rect(0, 222, 320, 18, COL_BAR);
     const char *hint;
     if (g_app.view == VIEW_ALBUMS)
-        hint = "A open   Y rescan   SELECT playlists   START exit";
+        hint = "A open  Y rescan  SEL+dpad vol  SELECT lists";
     else if (g_app.view == VIEW_PLAYLISTS)
-        hint = "A open   Y rescan   SELECT albums   START exit";
+        hint = "A open  Y rescan  SEL+dpad vol  SELECT albums";
     else
-        hint = "A play  B back  X pause  ZL/ZR skip  </>seek";
+        hint = "A play  B back  X pause  ZL/ZR skip  SEL+dpad vol";
     text_draw(hint, 8, 226, 0.29f, COL_DIM);
 }
 

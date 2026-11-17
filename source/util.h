@@ -23,6 +23,10 @@ void util_join_normalized(char *out, size_t cap, const char *dir, const char *en
 
 void util_format_time(uint32_t ms, char *out, size_t cap);
 
+// Fisher-Yates shuffle of `count` ints in place. Deterministic for a given
+// `seed`, so a play order can be reproduced (and tested).
+void util_shuffle_range(int *items, int count, uint32_t seed);
+
 // Reorders a square RGBA8 image of `size` pixels per side into the layout the
 // GPU samples: row-major 8x8 tiles, texels in Z order inside a tile, and each
 // texel stored as A,B,G,R. `dst` needs size*size*4 bytes.

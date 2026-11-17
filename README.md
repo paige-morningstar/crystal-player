@@ -50,9 +50,14 @@ struggles with the size, hold the console ~15 cm away and fill the frame.
   sound comes out of the headphone jack (headphones, or a speaker cable)
   instead. The screens stay powered, so the battery drains faster than in real
   sleep mode - that is the unavoidable trade for keeping the DSP running.
-- **Queue playback.** Starting a song queues the whole list, so a track
-  automatically continues into the next one. `ZL` / `ZR` skip around the
-  queue.
+- **Queue playback, shuffle and repeat.** Starting a song queues the whole
+  list, so a track automatically continues into the next one. `ZL` / `ZR` skip
+  around the queue, `SELECT` + `Y` shuffles what is left to play, and
+  `SELECT` + `X` cycles repeat off / all / one. The active modes are shown in
+  the bottom right of the top screen.
+- **Volume.** `SELECT` + d-pad up / down changes the level in the app in steps
+  of about 6%, shown both in the status line and as `VOL 68%` on the top screen
+  whenever it is not at full.
 
 ## How it works
 
@@ -199,7 +204,10 @@ The lower screen is the list.
 | `ZL` / `ZR` | Previous / next song |
 | D-pad left / right | Seek back / forward 5 s (hold to keep seeking) |
 | `Y` | Rescan the SD card |
-| `SELECT` | Switch between albums and playlists |
+| `SELECT` (tap) | Switch between albums and playlists |
+| `SELECT` + d-pad up / down | Volume up / down |
+| `SELECT` + `Y` | Shuffle on / off |
+| `SELECT` + `X` | Repeat: off -> all -> one |
 | `START` | Quit to the Homebrew Launcher |
 
 `ZL` restarts the current song if you are more than three seconds into it,

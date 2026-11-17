@@ -87,7 +87,7 @@ $(TARGET).cia: $(TARGET).elf $(TARGET).smdh $(CIA_RSF) $(BANNER)
 # run on the build machine instead of the console.
 test:
 	@mkdir -p $(BUILD)
-	@for t in albums playlists; do \
+	@for t in albums playlists queue; do \
 		$(HOSTCC) -std=c99 -O1 -Wall -I source tests/test_$$t.c \
 			source/library.c source/id3.c source/mp3info.c source/m3u8.c \
 			source/util.c -o $(BUILD)/test_$$t || exit 1; \

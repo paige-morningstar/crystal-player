@@ -110,6 +110,13 @@ static void play_queue_slot(void)
     g_app.loaded = true;
 }
 
+// Randomises the songs that have not played yet, leaving the current one alone.
+static void shuffle_rest(uint32_t seed)
+{
+    util_shuffle_range(g_app.queue + g_app.queue_pos + 1,
+                       g_app.queue_count - g_app.queue_pos - 1, seed);
+}
+
 // Fills the queue from the current view and starts playing the chosen row.
 static void play_from_row(int row)
 {
@@ -138,6 +145,9 @@ static void play_from_row(int row)
     else if (pl)
         util_copy(g_app.queue_name, sizeof(g_app.queue_name), pl->name);
 
+    if (g_app.shuffle)
+        shuffle_rest((uint32_t)osGetTime());
+
     play_queue_slot();
 }
 
@@ -162,6 +172,14 @@ static void next_track(void)
         return;
     if (g_app.queue_pos + 1 < g_app.queue_count) {
         g_app.queue_pos++;
+        play_queue_slot();
+        return;
+    }
+    // Past the last song: repeat all goes round, repeat one does nothing more.
+    if (g_app.repeat == 1) {
+        if (g_app.shuffle)
+            util_shuffle_range(g_app.queue, g_app.queue_count, (uint32_t)osGetTime());
+        g_app.queue_pos = 0;
         play_queue_slot();
     }
 }
@@ -191,14 +209,31 @@ void app_seek_by(int32_t delta_ms)
 
 static void advance_after_finish(void)
 {
+    if (g_app.queue_count == 0)
+        return;
+
+    if (g_app.repeat == 2) { // repeat one: start the same song again
+        play_queue_slot();
+        return;
+    }
+
     if (g_app.queue_pos + 1 < g_app.queue_count) {
         g_app.queue_pos++;
         play_queue_slot();
-    } else {
-        g_app.current = -1;
-        g_app.loaded = false;
-        ui_message("End of %s", g_app.queue_name[0] ? g_app.queue_name : "queue");
+        return;
     }
+
+    if (g_app.repeat == 1) { // repeat all: back to the top of the queue
+        g_app.queue_pos = 0;
+        if (g_app.shuffle)
+            util_shuffle_range(g_app.queue, g_app.queue_count, (uint32_t)osGetTime());
+        play_queue_slot();
+        return;
+    }
+
+    g_app.current = -1;
+    g_app.loaded = false;
+    ui_message("End of %s", g_app.queue_name[0] ? g_app.queue_name : "queue");
 }
 
 static void switch_view(ViewId view)
@@ -256,14 +291,73 @@ static void rescan_library(void)
     ui_message("%d songs found", found);
 }
 
+static void volume_step(int dir)
+{
+    float v = player_volume() + (dir > 0 ? 0.0625f : -0.0625f);
+    if (v < 0.0f)
+        v = 0.0f;
+    if (v > 1.0f)
+        v = 1.0f;
+    player_set_volume(v);
+    ui_message("Volume %d%%", (int)(v * 100.0f + 0.5f));
+}
+
+static void toggle_shuffle(void)
+{
+    g_app.shuffle = !g_app.shuffle;
+    if (g_app.shuffle)
+        shuffle_rest((uint32_t)osGetTime());
+    ui_message("Shuffle %s", g_app.shuffle ? "on" : "off");
+}
+
+static void cycle_repeat(void)
+{
+    g_app.repeat = (g_app.repeat + 1) % 3;
+    ui_message("Repeat %s",
+               g_app.repeat == 0 ? "off" : (g_app.repeat == 1 ? "all" : "one"));
+}
+
 static void handle_input(void)
 {
     u32 down = hidKeysDown();
     u32 held = hidKeysHeld();
+    u32 up = hidKeysUp();
     static int seek_hold;
+    static bool select_used;
 
     if (down & KEY_START) {
         s_quit = true;
+        return;
+    }
+
+    // SELECT is a modifier while it is held: + d-pad up/down sets the volume,
+    // + Y toggles shuffle, + X cycles repeat. A plain tap still switches between
+    // albums and playlists, on release, so a hold never fires that by accident.
+    if (down & KEY_SELECT)
+        select_used = false;
+
+    if (held & KEY_SELECT) {
+        if (down & KEY_UP) {
+            volume_step(+1);
+            select_used = true;
+        }
+        if (down & KEY_DOWN) {
+            volume_step(-1);
+            select_used = true;
+        }
+        if (down & KEY_Y) {
+            toggle_shuffle();
+            select_used = true;
+        }
+        if (down & KEY_X) {
+            cycle_repeat();
+            select_used = true;
+        }
+        if (select_used)
+            return;
+    } else if (up & KEY_SELECT) {
+        if (!select_used)
+            switch_view(g_app.view == VIEW_PLAYLISTS ? VIEW_ALBUMS : VIEW_PLAYLISTS);
         return;
     }
 
@@ -284,14 +378,6 @@ static void handle_input(void)
         }
     } else {
         seek_hold = 0;
-    }
-
-    if (down & KEY_SELECT) {
-        if (g_app.view == VIEW_PLAYLISTS)
-            switch_view(VIEW_ALBUMS);
-        else
-            switch_view(VIEW_PLAYLISTS);
-        return;
     }
 
     if (down & KEY_B) {
