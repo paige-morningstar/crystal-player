@@ -1,0 +1,14 @@
+# build output
+build/
+*.o
+*.elf
+*.smdh
+MusicPlayer3DS.3dsx
+MusicPlayer3DS.cia
+
+# macOS
+.DS_Store
+._*
+
+# editor / tooling
+.freebuff/
