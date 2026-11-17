@@ -22,9 +22,9 @@ imported automatically, and music keeps playing when the 3DS lid is closed.
   APIC frame, JPEG or PNG) is decoded and shown on the top screen, centre
   cropped and cached per album.
 - **Playlists.** Every `.m3u8` / `.m3u` file inside `sdmc:/music` (any sub
-  folder) becomes a playlist. `#EXTINF` titles are respected, relative paths
-  are resolved from the playlist's own folder, and Windows
-  backslash paths are handled.
+  folder) becomes a playlist. `#EXTINF` lines are accepted, though the song's own
+  title is what gets shown, not the playlist's; relative paths are resolved from
+  the playlist's own folder, and Windows backslash paths are handled.
 - **Plays with the lid closed.** Sleep mode is disabled while the app runs, so
   closing the lid does not pause the music. The console itself switches its
   built-in speakers off whenever the shell is closed, so with the lid shut the
@@ -55,12 +55,13 @@ Everything happens on the console, from the SD card, with no database.
   therefore survives being written with paths from another machine, and entries
   that match nothing are counted as "missing" rather than breaking it.
 - **Playback** (`player.c`). The current queue is decoded by dr_mp3 in chunks,
-  resampled in software to the DSP's 32.7 kHz, and streamed through two NDSP
-  channel buffers that are refilled as they are consumed. Starting any song
-  queues the list it came from, so play continues into the next track.
+  resampled in software to the DSP's 32728 Hz (it runs at `SYSCLOCK_SOC / 512`
+  and glitches on anything higher), and streamed through four NDSP wave buffers
+  of ~125 ms that are refilled as they are consumed. Starting any song queues
+  the list it came from, so play continues into the next track.
 - **Album art** (`art.c`). The APIC picture is decoded with stb_image, centre
-  cropped to a square, tiled into the 3DS texture layout, uploaded once per
-  album and cached; citro2d then draws it from the cache.
+  cropped to a square, box-filtered down, tiled into the 3DS texture layout,
+  uploaded once per album and cached; citro2d then draws it from the cache.
 - **Rendering** (`ui.c`, `main.c`). citro2d text and shapes on both screens,
   driven by a small state machine: album list, album contents, playlist list,
   playlist contents. `aptSetSleepAllowed(false)` is set at startup so closing
@@ -188,7 +189,7 @@ just like a normal music player.
 
 MP3 only (MPEG-1 / MPEG-2 / MPEG-2.5 Layer III, mono or stereo, any bit rate or
 sample rate up to 48 kHz). Decoding is done in software and resampled to the
-DSP's native 32.7 kHz output, so 44.1 and 48 kHz files play at the right pitch.
+DSP's native 32728 Hz output, so 44.1 and 48 kHz files play at the right pitch.
 
 Other formats (AAC, FLAC, OGG) are not supported.
 
