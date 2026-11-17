@@ -117,6 +117,17 @@ static void shuffle_rest(uint32_t seed)
                        g_app.queue_count - g_app.queue_pos - 1, seed);
 }
 
+// Back to the top of the queue. The shuffle covers every slot but the first,
+// so the song that just ended - still sitting in the last slot - cannot be moved
+// to the top and play twice in a row.
+static void wrap_queue(void)
+{
+    if (g_app.shuffle && g_app.queue_count > 1)
+        util_shuffle_range(g_app.queue + 1, g_app.queue_count - 1, (uint32_t)osGetTime());
+    g_app.queue_pos = 0;
+    play_queue_slot();
+}
+
 // Fills the queue from the current view and starts playing the chosen row.
 static void play_from_row(int row)
 {
@@ -176,12 +187,8 @@ static void next_track(void)
         return;
     }
     // Past the last song: repeat all goes round, repeat one does nothing more.
-    if (g_app.repeat == 1) {
-        if (g_app.shuffle)
-            util_shuffle_range(g_app.queue, g_app.queue_count, (uint32_t)osGetTime());
-        g_app.queue_pos = 0;
-        play_queue_slot();
-    }
+    if (g_app.repeat == 1)
+        wrap_queue();
 }
 
 static void prev_track(void)
@@ -224,10 +231,7 @@ static void advance_after_finish(void)
     }
 
     if (g_app.repeat == 1) { // repeat all: back to the top of the queue
-        g_app.queue_pos = 0;
-        if (g_app.shuffle)
-            util_shuffle_range(g_app.queue, g_app.queue_count, (uint32_t)osGetTime());
-        play_queue_slot();
+        wrap_queue();
         return;
     }
 

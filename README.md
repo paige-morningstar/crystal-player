@@ -19,7 +19,7 @@ One click, no account: that button always serves the newest release's
 Point **FBI → Remote Install → Scan QR Code** at this, and the 3DS downloads and
 installs the same `.cia` over Wi-Fi:
 
-![QR code linking to the latest Crystal Player .cia](docs/qr-cia.png)
+<img src="docs/qr-cia.png" alt="QR code linking to the latest Crystal Player .cia" width="240">
 
 The code resolves
 to `https://github.com/paige-morningstar/crystal-player/releases/latest/download/MusicPlayer3DS.cia`,
