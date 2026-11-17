@@ -208,10 +208,11 @@ make test   # host-side tests, no 3DS needed (albums, playlists, converter)
 `make` also rebuilds `MusicPlayer3DS.smdh` from `resources/icon.png`.
 `make clean` removes all build output.
 
-Packaging the CIA needs [makerom](https://github.com/3DSGuy/Project_CTR). A
-macOS arm64 build ships in `tools/makerom`; on other platforms put `makerom` on
-your `PATH` (or in `tools/`). The title, permissions and service access list it
-packages are in `resources/crystal.rsf`.
+Packaging the CIA needs [makerom](https://github.com/3DSGuy/Project_CTR).
+Download a build and put `makerom` on your `PATH`, or drop the binary in
+`tools/`, which the Makefile prefers. It is deliberately not committed here:
+makerom is GPL-2.0, and this repository does not redistribute it. The title,
+permissions and service access list it packages are in `resources/crystal.rsf`.
 
 The banner is committed as `resources/banner.bnr`, so packaging needs only
 makerom. To change the artwork or the chime:
@@ -240,7 +241,7 @@ resources/banner.bnr   Home Menu banner (picture + chime) packaged into the .cia
 resources/banner.png   banner artwork source
 resources/banner.wav   banner tune source
 resources/icon.png     app icon (SMDH + .cia)
-tools/makerom          CIA packager (macOS arm64)
+tools/makerom          optional makerom copy, not committed (see Building)
 tools/make_assets.py   regenerates icon.png, banner.png and banner.wav
 tools/apple_music_to_m3u8.py  rewrites a Music app playlist for the 3DS
 ```
@@ -252,7 +253,7 @@ tools/apple_music_to_m3u8.py  rewrites a Music app playlist for the 3DS
 - [stb_image](https://github.com/nothings/stb) (public domain) - JPEG/PNG cover
   art decoding.
 - [makerom](https://github.com/3DSGuy/Project_CTR) (GPL-2.0) - packages the
-  `.cia`; the bundled copy is only used for that.
+  `.cia`. Used, not redistributed here; get it from that link.
 - [bannertool](https://github.com/Epicpkmn11/bannertool) (MIT) - made
   `resources/banner.bnr`; it is not needed to build.
 

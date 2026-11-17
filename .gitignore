@@ -12,3 +12,6 @@ MusicPlayer3DS.cia
 
 # editor / tooling
 .freebuff/
+
+# makerom is GPL-2.0 and not redistributed
+tools/makerom

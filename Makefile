@@ -54,7 +54,7 @@ PYTHON		?=	python3
 
 all: $(TARGET).3dsx
 
-# Build the installable title. Requires makerom (bundled in tools/ on macOS arm64).
+# Build the installable title. Requires makerom on PATH, or dropped in tools/.
 cia: $(TARGET).cia
 
 $(BUILD):
