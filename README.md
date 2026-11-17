@@ -9,8 +9,10 @@ imported automatically, and music keeps playing when the 3DS lid is closed.
 
 ## Download
 
-[**Download MusicPlayer3DS.cia**](https://github.com/paige-morningstar/crystal-player/releases/latest/download/MusicPlayer3DS.cia)
-— the latest build, straight from the newest release. One click, no account.
+[![Download MusicPlayer3DS.cia](docs/download-button.svg)](https://github.com/paige-morningstar/crystal-player/releases/latest/download/MusicPlayer3DS.cia)
+
+One click, no account: that button always serves the newest release's
+`MusicPlayer3DS.cia`.
 
 ### Or install it from the console
 
