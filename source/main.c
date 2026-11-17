@@ -357,6 +357,16 @@ static void handle_input(void)
             cycle_repeat();
             select_used = true;
         }
+        // ZL / ZR only exist on a New 3DS, so the same skip is here too: it is
+        // the copy that works on an original 3DS, 3DS XL and 2DS.
+        if (down & KEY_LEFT) {
+            prev_track();
+            select_used = true;
+        }
+        if (down & KEY_RIGHT) {
+            next_track();
+            select_used = true;
+        }
         if (select_used)
             return;
     } else if (up & KEY_SELECT) {
@@ -446,7 +456,12 @@ int main(int argc, char **argv)
     (void)argc;
     (void)argv;
 
-    osSetSpeedupEnable(true); // 804 MHz on New 3DS, no-op elsewhere
+    // 804 MHz + L2 on a New 3DS. Old hardware has no such command, and anything
+    // that does not answer the call never returns from it, so ask the console
+    // before asking for the clock instead of firing it blind.
+    bool is_new3ds = false;
+    if (R_SUCCEEDED(APT_CheckNew3DS(&is_new3ds)) && is_new3ds)
+        osSetSpeedupEnable(true);
     gfxInitDefault();
     cfguInit(); // required by the shared system font used for text
 

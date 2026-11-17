@@ -7,6 +7,22 @@ your music into `sdmc:/music`, run the app, and it groups your songs into
 albums, shows album art from the files' own tags, and plays. M3U8 playlists are
 imported automatically, and music keeps playing when the 3DS lid is closed.
 
+## Consoles
+
+One build, one `.cia`, the whole family: Old 3DS, 3DS XL and 2DS as well as
+New 3DS, New 3DS XL and New 2DS XL. The code is compiled for the ARM11 MPCore
+they all share, and nothing in it needs one model in particular:
+
+- **Clock.** On a New 3DS the title asks for 804 MHz and the L2 cache, both in
+  its exheader and at startup - but only after the console reports that it is
+  one (`APT_CheckNew3DS`). Old hardware has no such command, and an environment
+  that does not answer it never returns from the call, so the request is simply
+  skipped there and the app runs at the stock clock.
+- **Buttons.** `ZL` / `ZR` only exist on New hardware, so previous / next song
+  is also on `SELECT` + d-pad left / right, which every model has.
+- **Memory.** The title asks for the same 64 MB layout on both, so nothing is
+  trimmed on the older consoles and no feature is dropped.
+
 ## Download
 
 [![Download MusicPlayer3DS.cia](docs/download-button.svg)](https://github.com/paige-morningstar/crystal-player/releases/latest/download/MusicPlayer3DS.cia)
@@ -201,11 +217,12 @@ The lower screen is the list.
 | `A` | Open the selected album or playlist, or play the selected song |
 | `B` | Back out of an album or playlist |
 | `X` | Play / pause |
-| `ZL` / `ZR` | Previous / next song |
+| `ZL` / `ZR` | Previous / next song (New 3DS / New 2DS XL only) |
 | D-pad left / right | Seek back / forward 5 s (hold to keep seeking) |
 | `Y` | Rescan the SD card |
 | `SELECT` (tap) | Switch between albums and playlists |
 | `SELECT` + d-pad up / down | Volume up / down |
+| `SELECT` + d-pad left / right | Previous / next song (works on every model) |
 | `SELECT` + `Y` | Shuffle on / off |
 | `SELECT` + `X` | Repeat: off -> all -> one |
 | `START` | Quit to the Homebrew Launcher |
