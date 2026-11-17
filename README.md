@@ -7,6 +7,23 @@ your music into `sdmc:/music`, run the app, and it groups your songs into
 albums, shows album art from the files' own tags, and plays. M3U8 playlists are
 imported automatically, and music keeps playing when the 3DS lid is closed.
 
+## Download
+
+[**Download MusicPlayer3DS.cia**](https://github.com/paige-morningstar/crystal-player/releases/latest/download/MusicPlayer3DS.cia)
+— the latest build, straight from the newest release. One click, no account.
+
+### Or install it from the console
+
+Point **FBI → Remote Install → Scan QR Code** at this, and the 3DS downloads and
+installs the same `.cia` over Wi-Fi:
+
+![QR code linking to the latest Crystal Player .cia](docs/qr-cia.png)
+
+The code resolves
+to `https://github.com/paige-morningstar/crystal-player/releases/latest/download/MusicPlayer3DS.cia`,
+so it always fetches the newest release rather than a frozen one. If your camera
+struggles with the size, hold the console ~15 cm away and fill the frame.
+
 ## Features
 
 - **Albums, not one long list.** Scans `sdmc:/music` (and every sub folder) for
@@ -87,7 +104,8 @@ shows up with its title and icon.
 
 `MusicPlayer3DS.cia` installs as a normal title, so it launches straight from
 the Home Menu without the Homebrew Launcher. Copy the file anywhere on the SD
-card and install it with FBI (TitleDB → your file, or *Remote Install*):
+card and install it with FBI, or use the [QR code](#or-install-it-from-the-console)
+above to install it without copying anything:
 
 ```
 MusicPlayer3DS.cia      title id 000400000FF21C00
